@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Google\Cloud\Translate\V2\TranslateClient;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 
 class GoogleServiceProvider extends ServiceProvider
@@ -17,7 +18,7 @@ class GoogleServiceProvider extends ServiceProvider
         $this->app->bind(TranslateClient::class,function($app){
 
             $translationConfig = [
-                'keyFilePath' => storage_path('app/' . config('services.google_cloud.key_file')),
+                'keyFilePath' => Storage::path(config('services.google_cloud.key_file')),
                 'suppressKeyFileNotice' => true,
             ];
         
