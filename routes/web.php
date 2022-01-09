@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Shopify\Clients\Rest;
+use Shopify\Clients\Rest as ShopifyAPI;
 use Google\Cloud\Translate\V2\TranslateClient;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -23,7 +23,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('shopifytest', function (Rest $client) {
+Route::get('shopifytest', function (ShopifyAPI $client) {
 
     $response = $client->get('products');
     return $response->getDecodedBody();
@@ -45,10 +45,13 @@ Route::get('translatetest', function (TranslateClient $translate) {
 
 
 Route::get('spreadsheettest', function () {
+    /*
+    ! Get excell file
+    */
 
-    $reader = IOFactory::createReaderForFile(Storage::path(''));
+    $reader = IOFactory::createReaderForFile(Storage::path('demo.xls'));
     $reader->setReadDataOnly(true);
-    $spreadsheet = $reader->load(Storage::path(''));
+    $spreadsheet = $reader->load(Storage::path('demo.xls'));
 
     $text = "";
     for ($i=6; $i < 104 ; $i++) { 
@@ -57,3 +60,4 @@ Route::get('spreadsheettest', function () {
     
     return $text;
 });
+
