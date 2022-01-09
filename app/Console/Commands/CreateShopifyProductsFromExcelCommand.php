@@ -39,10 +39,10 @@ class CreateShopifyProductsFromExcelCommand extends Command
      */
     public function handle()
     {
-            /*
-    ! Get Excell File
-    ! 
-    */
+        /*
+        ! Get Excell File
+        ! 
+        */
         $spreadsheet = IOFactory::load(Storage::path('demo.xls'));
         $worksheet = $spreadsheet->getActiveSheet();
         $highestRow = $worksheet->getHighestRow();

@@ -36,8 +36,8 @@ class CreateProductsOnShopifyJob implements ShouldQueue
         $shopify->post(
             "products",
             [
-                "product" => $productData
+                "product" => $this->productData
             ]
-        )
+        );
     }
 }
