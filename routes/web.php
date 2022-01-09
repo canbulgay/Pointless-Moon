@@ -43,21 +43,18 @@ Route::get('translatetest', function (TranslateClient $translate) {
 ? Örnekleri incele
 */
 
-
-Route::get('spreadsheettest', function () {
-    /*
-    ! Get excell file
-    */
-
+Route::get('exceltest', function () {
+    //  Get Excel file
+    //  Show a cell of each line on the screen
     $reader = IOFactory::createReaderForFile(Storage::path('demo.xls'));
     $reader->setReadDataOnly(true);
     $spreadsheet = $reader->load(Storage::path('demo.xls'));
 
     $text = "";
-    for ($i=6; $i < 104 ; $i++) { 
-        $text .= $spreadsheet->getActiveSheet()->getCell('E' . $i). "<br>";
+    for ($i = 4; $i < 104; $i++) {
+        $text .= $spreadsheet->getActiveSheet()->getCell('E' . $i) . "<br>";
     }
-    
+
     return $text;
 });
 
