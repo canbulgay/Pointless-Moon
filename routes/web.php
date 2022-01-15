@@ -4,8 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Shopify\Clients\Rest as ShopifyAPI;
 use Google\Cloud\Translate\V2\TranslateClient;
 use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /*
@@ -37,11 +35,6 @@ Route::get('translatetest', function (TranslateClient $translate) {
 
     return $result['text'];
 });
-
-/*
-! Boş bir php projesi açın ve composerla kurulumu yapın.
-? Örnekleri incele
-*/
 
 Route::get('exceltest', function () {
     //  Get Excel file

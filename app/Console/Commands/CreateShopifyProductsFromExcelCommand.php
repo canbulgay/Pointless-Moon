@@ -6,6 +6,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Jobs\CreateProductsOnShopifyJob;
+use Google\Cloud\Translate\V2\TranslateClient;
+
 class CreateShopifyProductsFromExcelCommand extends Command
 {
     /**
@@ -37,7 +39,7 @@ class CreateShopifyProductsFromExcelCommand extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(TranslateClient $translater)
     {
         /*
         ! Get Excell File
@@ -52,18 +54,34 @@ class CreateShopifyProductsFromExcelCommand extends Command
         $imageUrlColumns = ["AZ", "BA", "BB", "BC", "BD", "BE", "BF", "BG", "BH", "BJ"];
 
         for ($i = 4; $i <= $highestRow; $i++) {
+            $sizeParts = [];
+            foreach (["Y", "Z", "X"] as $column) {
+                if ($worksheet->getCell($column . $i)->getValue() != "") {
+                    $sizeParts[] = $worksheet->getCell($column . $i)->getValue();
+                }
+            }
+            $sizeBaseName = implode('x', $sizeParts);
+            $sizeName = "";
+            if ($sizeBaseName != "") $sizeName = $sizeBaseName . " cm";
+
             $productToCreate = [
                 "title" =>
-                $worksheet->getCell('F' . $i)->getValue() . " " .
-                    $worksheet->getCell('I' . $i)->getValue() . " " .
-                    $worksheet->getCell('J' . $i)->getValue() . " - " .
-                    $worksheet->getCell('E' . $i)->getValue(),
+                $translater->translate($worksheet->getCell('I' . $i)->getValue())['text'] . " " .
+                $worksheet->getCell('K' . $i)->getValue() . ", " .
+                $translater->translate(
+                    explode("\n", $worksheet->getCell('AL' . $i)->getValue())[0]
+                )['text'] . ", "
+                . $sizeName,
 
-                "body_html" => "<strong>Good " . $worksheet->getCell('I' . $i)->getValue() . " " . $worksheet->getCell('J' . $i)->getValue() . "!</strong>",
-
+                "body_html" => "<strong>" . $translater->translate(
+                    $worksheet->getCell('I' . $i)->getValue() . " " . $worksheet->getCell('J' . $i)->getValue()
+                )['text'] . "!</strong>",
+                
                 "vendor" => $worksheet->getCell('F' . $i)->getValue(),
 
-                "product_type" => $worksheet->getCell('I' . $i)->getValue(),
+                "product_type" => $translater->translate(
+                    $worksheet->getCell('I' . $i)->getValue()
+                )['text'],
 
                 "variants" => [
                     [
