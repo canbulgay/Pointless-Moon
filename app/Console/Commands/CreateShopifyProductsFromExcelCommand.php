@@ -43,7 +43,6 @@ class CreateShopifyProductsFromExcelCommand extends Command
     {
         /*
         ! Get Excell File
-        ! 
         */
         $spreadsheet = IOFactory::load(Storage::path('demo.xls'));
         $worksheet = $spreadsheet->getActiveSheet();
@@ -53,51 +52,70 @@ class CreateShopifyProductsFromExcelCommand extends Command
 
         $imageUrlColumns = ["AZ", "BA", "BB", "BC", "BD", "BE", "BF", "BG", "BH", "BJ"];
 
+        $productsData = [];
+
         for ($i = 4; $i <= $highestRow; $i++) {
-            $sizeParts = [];
-            foreach (["Y", "Z", "X"] as $column) {
+            $productData = [
+                "code" => $worksheet->getCell("E" . $i)->getValue(),
+                "brand" => $worksheet->getCell("F" . $i)->getValue(),
+                "type" => $worksheet->getCell("I" . $i)->getValue(),
+                "width" => $worksheet->getCell("Y" . $i)->getValue(),
+                "height" => $worksheet->getCell("Z" . $i)->getValue(),
+                "length" => $worksheet->getCell("X" . $i)->getValue(),
+                "color" => explode("\n", $worksheet->getCell('AL' . $i)->getValue())[0],
+                "collection" => $worksheet->getCell("K" . $i)->getValue(),
+                "category" => $worksheet->getCell("J" . $i)->getValue(),
+                "price" => $worksheet->getCell("Q" . $i)->getValue(),
+                "images" => [],
+            ];
+            foreach ($imageUrlColumns as $column) {
                 if ($worksheet->getCell($column . $i)->getValue() != "") {
-                    $sizeParts[] = $worksheet->getCell($column . $i)->getValue();
+                    $productData["images"][] = ["src" => $worksheet->getCell($column . $i)->getValue()];
+                }
+            }
+                        
+            $sizeParts = [];
+            foreach (["width", "height", "length"] as $column) {
+                if ($productData[$column] != "") {
+                    $sizeParts[] = $productData[$column];
                 }
             }
             $sizeBaseName = implode('x', $sizeParts);
-            $sizeName = "";
-            if ($sizeBaseName != "") $sizeName = $sizeBaseName . " cm";
+            $productData["sizeName"] = "";
+            if ($sizeBaseName != "") $productData["sizeName"] = $sizeBaseName . " cm";
 
-            $productToCreate = [
-                "title" =>
-                $translater->translate($worksheet->getCell('I' . $i)->getValue())['text'] . " " .
-                $worksheet->getCell('K' . $i)->getValue() . ", " .
-                $translater->translate(
-                    explode("\n", $worksheet->getCell('AL' . $i)->getValue())[0]
-                )['text'] . ", "
-                . $sizeName,
+            $productsData[] = $productData;
 
-                "body_html" => "<strong>" . $translater->translate(
-                    $worksheet->getCell('I' . $i)->getValue() . " " . $worksheet->getCell('J' . $i)->getValue()
-                )['text'] . "!</strong>",
-                
-                "vendor" => $worksheet->getCell('F' . $i)->getValue(),
+            foreach ($productsData as $productData) {
 
-                "product_type" => $translater->translate(
-                    $worksheet->getCell('I' . $i)->getValue()
-                )['text'],
-
-                "variants" => [
-                    [
-                        "sku" => $worksheet->getCell('E' . $i)->getValue(),
-                        "price" => $worksheet->getCell('Q' . $i)->getValue(),
-                    ]
-                ],
-
-                "images" => []
-            ];
-
-            foreach ($imageUrlColumns as $column) {
-                if ($worksheet->getCell($column . $i)->getValue() != "") {
-                    $productToCreate["images"][] = ["src" => $worksheet->getCell($column . $i)->getValue()];
-                }
-            }
+                $productToCreate = [
+                    "title" =>
+                    $translater->translate($productData["type"])['text'] . " " .
+                        $productData["collection"] . ", " .
+                        $translater->translate(
+                            $productData["color"]
+                        )['text'] . ", "
+                        . $productData["sizeName"],
+    
+                    "body_html" => "<strong>" . $translater->translate(
+                        $productData["type"] . " " . $productData["category"]
+                    )['text'] . "!</strong>",
+    
+                    "vendor" => $productData["brand"],
+    
+                    "product_type" => $translater->translate(
+                        $productData["type"]
+                    )['text'],
+    
+                    "variants" => [
+                        [
+                            "sku" => $productData["code"],
+                            "price" => $productData["price"],
+                        ]
+                    ],
+    
+                    "images" => $productData["images"],
+                ];
 
             $this->line($productToCreate["title"] . " creating with " . count($productToCreate["images"]) . " images...");
 
