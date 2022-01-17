@@ -2,9 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use Shopify\Clients\Rest as ShopifyAPI;
-use Google\Cloud\Translate\V2\TranslateClient;
+use App\Helpers\TranslateHelper as TranslateClient;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\DTO\Product;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -29,11 +31,7 @@ Route::get('shopifytest', function (ShopifyAPI $client) {
 
 Route::get('translatetest', function (TranslateClient $translate) {
     
-    $result = $translate->translate(
-        'Convert Daily Grasshoper'
-    );
-
-    return $result['text'];
+    return $translate->translate('Hello World!');
 });
 
 Route::get('exceltest', function () {

@@ -15,7 +15,7 @@ class GoogleServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(TranslateClient::class,function($app){
+        $this->app->singleton(TranslateClient::class,function($app){
 
             $translationConfig = [
                 'keyFilePath' => Storage::path(config('services.google_cloud.key_file')),
