@@ -17,17 +17,17 @@ class Product
     public $linkBrand;
     public $type;
     public $category;
+    public $collection;
     public $barcode;
     public $madeIn;
     public $purchaseCountry;
-    public $purchasePrice;
-    public $rrp;
+    public $price;
     public $reservedStock;
     public $width;
     public $height;
     public $length;
-    public $color;
     public $sizeName;
+    public $color;
     public $images = [];
     
     /**
@@ -53,37 +53,40 @@ class Product
         $productsData = [];
 
         for ($i = 4; $i <= $highestRow; $i++) {
-            $productData = [
-                "code" => $worksheet->getCell("E" . $i)->getValue(),
-                "brand" => $worksheet->getCell("F" . $i)->getValue(),
-                "type" => $worksheet->getCell("I" . $i)->getValue(),
-                "width" => $worksheet->getCell("Y" . $i)->getValue(),
-                "height" => $worksheet->getCell("Z" . $i)->getValue(),
-                "length" => $worksheet->getCell("X" . $i)->getValue(),
-                "color" => explode("\n", $worksheet->getCell('AL' . $i)->getValue())[0],
-                "collection" => $worksheet->getCell("K" . $i)->getValue(),
-                "category" => $worksheet->getCell("J" . $i)->getValue(),
-                "price" => $worksheet->getCell("Q" . $i)->getValue(),
-                "images" => [],
-            ];
+
+                $product = new static;
+
+                $product->code = $worksheet->getCell("E" . $i)->getValue();
+                $product->brand = $worksheet->getCell("F" . $i)->getValue();
+                $product->type = $worksheet->getCell("I" . $i)->getValue();
+                $product->width = $worksheet->getCell("Y" . $i)->getValue();
+                $product->height = $worksheet->getCell("Z" . $i)->getValue();
+                $product->length = $worksheet->getCell("X" . $i)->getValue();
+                $product->color = explode("\n", $worksheet->getCell('AL' . $i)->getValue())[0];
+                $product->collection = $worksheet->getCell("K" . $i)->getValue();
+                $product->category = $worksheet->getCell("J" . $i)->getValue();
+                $product->price = $worksheet->getCell("Q" . $i)->getValue();
+                $product->images = [];
+
             foreach ($imageUrlColumns as $column) {
                 if ($worksheet->getCell($column . $i)->getValue() != "") {
-                    $productData["images"][] = ["src" => $worksheet->getCell($column . $i)->getValue()];
+                    $product->images[] = ["src" => $worksheet->getCell($column . $i)->getValue()];
                 }
             }
                         
             $sizeParts = [];
             foreach (["width", "height", "length"] as $column) {
-                if ($productData[$column] != "") {
-                    $sizeParts[] = $productData[$column];
+                if ($product->$column != "") {
+                    $sizeParts[] = $product->$column;
                 }
             }
             $sizeBaseName = implode('x', $sizeParts);
-            $productData["sizeName"] = "";
-            if ($sizeBaseName != "") $productData["sizeName"] = $sizeBaseName . " cm";
+            $product->sizeName = "";
+            if ($sizeBaseName != "") $product->sizeName = $sizeBaseName . " cm";
 
-            $productsData[] = $productData;
+            $productsData[] = $product;
         }
+        return $productsData;
     }
 }
 

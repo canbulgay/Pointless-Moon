@@ -52,31 +52,31 @@ class CreateShopifyProductsFromExcelCommand extends Command
 
                 $productToCreate = [
                     "title" =>
-                    $translater->translate($productData["type"]) . " " .
-                        $productData["collection"] . ", " .
+                    $translater->translate($productData->type) . " " .
+                        $productData->collection . ", " .
                         $translater->translate(
-                            $productData["color"]
+                            $productData->color
                         ) . ", "
-                        . $productData["sizeName"],
+                        . $productData->sizeName,
     
                     "body_html" => "<strong>" . $translater->translate(
-                        $productData["type"] . " " . $productData["category"]
+                        $productData->type . " " . $productData->category
                     ) . "!</strong>",
     
-                    "vendor" => $productData["brand"],
+                    "vendor" => $productData->brand,
     
                     "product_type" => $translater->translate(
-                        $productData["type"]
+                        $productData->type
                     ),
     
                     "variants" => [
                         [
-                            "sku" => $productData["code"],
-                            "price" => $productData["price"],
+                            "sku" => $productData->code,
+                            "price" => $productData->price,
                         ]
                     ],
     
-                    "images" => $productData["images"],
+                    "images" => $productData->images,
                 ];
 
             $this->line($productToCreate["title"] . " creating with " . count($productToCreate["images"]) . " images...");
