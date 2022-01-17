@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use Illuminate\Support\Facades\Cache;
 use Google\Cloud\Translate\V2\TranslateClient;
+use App\Models\Translation;
 
 
 class TranslateHelper
@@ -18,10 +19,17 @@ class TranslateHelper
 
         return Cache::rememberForever(
             'translation: '. $target . ":" .$string, 
-                function () use ($string,$options) {
-                        $translator = app(TranslateClient::class);
-                        return $translator->translate($string, $options)['text'];
-        });
+                function () use ($string,$options,$target) {
+                    $translation = Translation::where('target',$target)->where('string',$string)->first();
 
+                    if(! $translation){
+                        $translator = app(TranslateClient::class);
+                        $result = $translator->translate($string, $options)['text'];
+                        $translation = Translation::create(compact($string,$target,$result));
+                    }
+
+                    return $translation->result;
+                }
+        );
     }
 }
