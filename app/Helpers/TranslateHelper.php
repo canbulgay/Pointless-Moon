@@ -25,7 +25,7 @@ class TranslateHelper
                     if(! $translation){
                         $translator = app(TranslateClient::class);
                         $result = $translator->translate($string, $options)['text'];
-                        $translation = Translation::create(compact($string,$target,$result));
+                        $translation = Translation::create(compact('string','target','result'));
                     }
 
                     return $translation->result;

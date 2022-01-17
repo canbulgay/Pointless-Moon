@@ -12,6 +12,6 @@ class Translation extends Model
     protected $fillable = [
         'string',
         'target',
-        'result '
+        'result',
     ];
 }
