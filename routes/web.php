@@ -20,8 +20,11 @@ use App\DTO\Product;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard');
 });
+Route::get('/translationsetting',function (){
+    return view('Translate.index');
+})->name('s_translation');
 
 Route::get('shopifytest', function (ShopifyAPI $client) {
 
