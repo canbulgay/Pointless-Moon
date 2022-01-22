@@ -5,8 +5,7 @@ use Shopify\Clients\Rest as ShopifyAPI;
 use App\Helpers\TranslateHelper as TranslateClient;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use App\DTO\Product;
-
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,12 +18,16 @@ use App\DTO\Product;
 |
 */
 
+
 Route::get('/', function () {
-    return view('dashboard');
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
 });
-Route::get('/translationsetting',function (){
-    return view('Translate.index');
-})->name('s_translation');
+
 
 Route::get('shopifytest', function (ShopifyAPI $client) {
 
@@ -52,3 +55,6 @@ Route::get('exceltest', function () {
     return $text;
 });
 
+Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->name('dashboard');
