@@ -6,6 +6,8 @@ use App\Helpers\TranslateHelper as TranslateClient;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Inertia\Inertia;
+use Illuminate\Foundation\Application;
+use App\Http\Controllers\TranslationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,3 +60,7 @@ Route::get('exceltest', function () {
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->name('dashboard');
+
+Route::resource('translation',TranslationController::class)
+    ->only(['index'])
+    ->middleware(['auth:sanctum', 'verified']);
