@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Translation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Inertia\Inertia;
 
 class TranslationController extends Controller
 {
@@ -14,7 +16,8 @@ class TranslationController extends Controller
      */
     public function index()
     {
-        //
+        $translations = Translation::all();
+        return Inertia::render('Translation/Index', compact('translations'));
     }
 
     /**
@@ -69,7 +72,16 @@ class TranslationController extends Controller
      */
     public function update(Request $request, Translation $translation)
     {
-        //
+        $request->validate([
+            'result' => 'required|string',
+        ]);
+
+        $translation->result = $request->input('result');
+        $translation->save();
+
+        Cache::forget('translation:' . $translation->target . ':' . $translation->string);
+
+        return redirect()->route('translations.index');
     }
 
     /**
@@ -80,6 +92,9 @@ class TranslationController extends Controller
      */
     public function destroy(Translation $translation)
     {
-        //
+        Cache::forget('translation:' . $translation->target . ':' . $translation->string);
+        $translation->delete();
+
+        return redirect()->route('translations.index');
     }
 }

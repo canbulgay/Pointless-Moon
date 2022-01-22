@@ -61,6 +61,6 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->name('dashboard');
 
-Route::resource('translation',TranslationController::class)
-    ->only(['index'])
+Route::resource('translations',TranslationController::class)
+    ->only(['index','update'])
     ->middleware(['auth:sanctum', 'verified']);
