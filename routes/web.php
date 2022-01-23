@@ -8,6 +8,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use Inertia\Inertia;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\TranslationController;
+use App\Jobs\CreateShopifyProductsFromExcelJob;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,3 +69,12 @@ Route::resource('translations',TranslationController::class)
 Route::middleware(['auth:sanctum','verified'])->get('import-excel',function(){
     return Inertia::render('ImportExcel');
 })->name('import-excel');
+
+Route::middleware(['auth:sanctum', 'verified'])->post('import-excel', function () {
+    request()->validate([
+        'excel' => 'required|file|mimes:xls,xlsx,csv'
+    ]);
+    $filePath = request()->file('excel')->store('excels');
+    CreateShopifyProductsFromExcelJob::dispatch($filePath);
+    return redirect()->route('import-excel');
+})->name('upload-excel');
