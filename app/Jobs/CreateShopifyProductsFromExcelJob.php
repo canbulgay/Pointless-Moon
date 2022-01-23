@@ -20,6 +20,7 @@ class CreateShopifyProductsFromExcelJob implements ShouldQueue
 
     /**
      * Excel file path in storage/app dir
+     * 
      * @param string $filePath
      */
     public $excelFilePath;

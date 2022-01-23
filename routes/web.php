@@ -64,3 +64,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 Route::resource('translations',TranslationController::class)
     ->only(['index','update'])
     ->middleware(['auth:sanctum', 'verified']);
+
+Route::middleware(['auth:sanctum','verified'])->get('import-excel',function(){
+    return Inertia::render('ImportExcel');
+})->name('import-excel');

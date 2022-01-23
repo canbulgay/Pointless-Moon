@@ -12,7 +12,7 @@ class CreateShopifyProductsFromExcelCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'shopify:fromexcel';
+    protected $signature = 'shopify:fromexcel' {file};
 
     /**
      * The console command description.
