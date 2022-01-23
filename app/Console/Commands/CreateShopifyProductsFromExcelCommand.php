@@ -39,8 +39,8 @@ class CreateShopifyProductsFromExcelCommand extends Command
     public function handle()
     {
 
-        CreateShopifyProductsFromExcelJob::dispatch();
-        
+        CreateShopifyProductsFromExcelJob::dispatch($this->argument('file'));
+
         $this->info("Finished");
 
         }
