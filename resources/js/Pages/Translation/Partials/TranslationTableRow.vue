@@ -12,6 +12,7 @@
           class="border-2 border-indigo-500"
           name="result"
           v-model="form.result"
+          @keyup="updateTranslationOnKeyUp"
         />
         <button
           v-if="!autosave"
