@@ -75,7 +75,7 @@ class CreateShopifyProductsFromExcelJob implements ShouldQueue
                     "images" => $productData->images,
                 ];
             
-                $dispatchedJob = CreateProductsOnShopifyJob::dispatch(($productToCreate));
+                $dispatchedJob = CreateProductsOnShopifyJob::dispatch($productToCreate);
         
             }
     }
